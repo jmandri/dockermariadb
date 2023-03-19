@@ -1,0 +1,29 @@
+1. Vad gör "ADD employees.sql /docker-entrypoint-initdb.d/employees.sql" i er Dockerfile? 
+
+Svar: 
+ADD employees.sql används för att kopiera filen "employees.sql" till directory I Docker-containern. Directoryt som heter "/docker-entrypoint-initdb.d/ beskrivs som ett standard directory för att initiera en databas med egna SQL-scripts. I vårt fall blir det då employees.sql som initieras vilket innebär att employee-tables kopieras till Docker containern i directoryt som heter /docker-entrypoint-initdb.d/ som är i själva containern. 
+
+2: Hur löste ni delen "Skapa/läs data från databasen med mariadb.py". Skriv kortfattat nedan. 
+
+Svar: 
+Jag startar mariaDB-containern: 
+docker run --name employees-db -e MYSQL_ROOT_PASSWORD=irdnam -e MYSQL_DATABASE=workplace -e MYSQL_USER=mandri -e MYSQL_PASSWORD=irdnam -p 3306:3306 -d mariadb
+
+Jag ändrar användarnamn och lösenord i mariadb.py -filen till det jag har angivit i min dockerfile.
+Jag ändrar inte host eftersom att jag vill ha localhost.
+
+Jag vill köra mariadb.py filen med kommandot python mariadb.py, men innan jag kan göra det så måste jag installera mysql-connector. Jag gör det med pip install mysql-connector-python och kör sedan python mariadb.py
+
+
+
+3: Stötte ni på andra problem och hur löste ni dessa? Svara nedan.
+
+Svar: 
+Jag stötte på ett fel i mariadb.py -filen. När jag körde mariadb.py så fick jag output:
+  File "mariadb.py", line 35, in <module>
+    add_data("Super", "Man")
+  File "mariadb.py", line 20, in add_data
+    cursor.commit()
+Jag ändrade då raden cursor.commit() till connection.commit() vilket löste problemet. När jag nu kör mariadb.py filen får jag outputen jag vill, vilket är: 
+Successfully added entry to database
+Successfully retrieved Super, Man
